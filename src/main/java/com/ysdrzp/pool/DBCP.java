@@ -1,15 +1,13 @@
 package com.ysdrzp.pool;
 
+import com.ysdrzp.util.JdbcUtil;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.commons.dbcp2.BasicDataSourceFactory;
 import org.junit.Test;
-
 import javax.sql.DataSource;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.Properties;
 
 public class DBCP {
@@ -30,7 +28,7 @@ public class DBCP {
         Connection connection = basicDataSource.getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement("delete from user where id=4");
         preparedStatement.executeUpdate();
-        release(connection, preparedStatement);
+        JdbcUtil.close(connection, preparedStatement);
     }
 
     @Test
@@ -43,60 +41,7 @@ public class DBCP {
         Connection connection = dataSource.getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement("delete from user where id=4");
         preparedStatement.executeUpdate();
-        release(connection, preparedStatement);
+        JdbcUtil.close(connection, preparedStatement);
     }
 
-    /**
-     * 释放连接
-     * @param conn
-     * @param st
-     */
-    public static void release(Connection conn, Statement st){
-        if (st!=null){
-            try {
-                st.close();
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-        }
-        if (conn!=null){
-            try {
-                //将Connection连接对象还给数据库连接池
-                conn.close();
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-        }
-    }
-
-    /**
-     * 释放连接
-     * @param conn
-     * @param st
-     * @param rs
-     */
-    public static void release(Connection conn, Statement st, ResultSet rs){
-        if (rs!=null){
-            try {
-                rs.close();
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-        }
-        if (st!=null){
-            try {
-                st.close();
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-        }
-        if (conn!=null){
-            try {
-                //将Connection连接对象还给数据库连接池
-                conn.close();
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-        }
-    }
 }
